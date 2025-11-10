@@ -1,245 +1,456 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import Icon from '@/components/ui/icon';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-interface SectionData {
-  id: string;
-  title: string;
-  icon: string;
-  color: string;
-  items: string[];
-  facts: { title: string; description: string }[];
-}
-
-const sections: SectionData[] = [
-  {
-    id: 'art',
-    title: 'Живопись и искусство',
-    icon: 'Palette',
-    color: 'bg-gradient-to-br from-amber-400 to-orange-600',
-    items: ['Импрессионизм', 'Романтизм', 'Реализм'],
-    facts: [
-      {
-        title: 'Импрессионизм',
-        description: 'Революционное направление в живописи, зародившееся во Франции в 1860-х годах. Художники стремились передать мимолетные впечатления от света и цвета.'
-      },
-      {
-        title: 'Клод Моне',
-        description: 'Основатель импрессионизма, написал более 250 картин с изображением водяных лилий в своём саду в Живерни.'
-      },
-      {
-        title: 'Романтизм',
-        description: 'Направление, провозглашавшее культ чувства и воображения. Романтики обращались к темам природы, истории и национальной культуры.'
-      }
-    ]
-  },
-  {
-    id: 'architecture',
-    title: 'Архитектурные стили',
-    icon: 'Building2',
-    color: 'bg-gradient-to-br from-blue-500 to-indigo-700',
-    items: ['Неоготика', 'Неоренессанс', 'Эклектика'],
-    facts: [
-      {
-        title: 'Неоготика',
-        description: 'Возрождение готического стиля в архитектуре XIX века. Характерны острые шпили, стрельчатые арки и витражи.'
-      },
-      {
-        title: 'Эйфелева башня',
-        description: 'Построена в 1889 году для Всемирной выставки в Париже. Символ технического прогресса и инженерного искусства эпохи.'
-      },
-      {
-        title: 'Эклектика',
-        description: 'Смешение различных архитектурных стилей в одном здании. Популярна в конце XIX века в Европе и США.'
-      }
-    ]
-  },
-  {
-    id: 'figures',
-    title: 'Известные деятели культуры',
-    icon: 'Award',
-    color: 'bg-gradient-to-br from-purple-500 to-pink-600',
-    items: ['Писатели', 'Композиторы', 'Художники'],
-    facts: [
-      {
-        title: 'Виктор Гюго',
-        description: 'Великий французский писатель, автор "Отверженных" и "Собора Парижской Богоматери". Символ романтизма в литературе.'
-      },
-      {
-        title: 'Людвиг ван Бетховен',
-        description: 'Немецкий композитор, соединивший классицизм и романтизм. Создал 9 симфоний, несмотря на полную глухоту в последние годы.'
-      },
-      {
-        title: 'Винсент Ван Гог',
-        description: 'Нидерландский художник-постимпрессионист. За жизнь продал всего одну картину, а сегодня его работы стоят миллионы.'
-      }
-    ]
-  }
-];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 const Index = () => {
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const [score, setScore] = useState(0);
-  const [visitedSections, setVisitedSections] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const handleSectionClick = (sectionId: string) => {
-    setSelectedSection(sectionId === selectedSection ? null : sectionId);
-    if (!visitedSections.has(sectionId)) {
-      setVisitedSections(new Set([...visitedSections, sectionId]));
-      setScore(score + 33);
+  const discoveries = [
+    {
+      id: 1,
+      title: 'Электромагнетизм',
+      scientist: 'Майкл Фарадей',
+      year: '1831',
+      category: 'physics',
+      description: 'Открытие электромагнитной индукции стало основой для создания электрических генераторов и трансформаторов.',
+      impact: 'Революция в энергетике'
+    },
+    {
+      id: 2,
+      title: 'Периодическая система элементов',
+      scientist: 'Дмитрий Менделеев',
+      year: '1869',
+      category: 'chemistry',
+      description: 'Периодический закон и таблица химических элементов, позволившая предсказать свойства неоткрытых элементов.',
+      impact: 'Основа современной химии'
+    },
+    {
+      id: 3,
+      title: 'Теория эволюции',
+      scientist: 'Чарльз Дарвин',
+      year: '1859',
+      category: 'biology',
+      description: 'Теория естественного отбора объяснила механизм эволюции видов и происхождение человека.',
+      impact: 'Революция в биологии'
+    },
+    {
+      id: 4,
+      title: 'Микробная теория',
+      scientist: 'Луи Пастер',
+      year: '1860-е',
+      category: 'biology',
+      description: 'Доказательство роли микроорганизмов в процессах брожения и болезней, основа микробиологии.',
+      impact: 'Прорыв в медицине'
+    },
+    {
+      id: 5,
+      title: 'Рентгеновское излучение',
+      scientist: 'Вильгельм Рентген',
+      year: '1895',
+      category: 'physics',
+      description: 'Открытие проникающего излучения, позволившего увидеть внутреннее строение объектов.',
+      impact: 'Революция в медицинской диагностике'
+    },
+    {
+      id: 6,
+      title: 'Радиоактивность',
+      scientist: 'Мария и Пьер Кюри',
+      year: '1898',
+      category: 'physics',
+      description: 'Открытие радия и полония, изучение радиоактивности как свойства атомов.',
+      impact: 'Основа ядерной физики'
+    },
+    {
+      id: 7,
+      title: 'Специальная теория относительности',
+      scientist: 'Альберт Эйнштейн',
+      year: '1905',
+      category: 'physics',
+      description: 'Революционная теория, изменившая представление о пространстве, времени и энергии.',
+      impact: 'Переворот в физике'
+    },
+    {
+      id: 8,
+      title: 'Группы крови',
+      scientist: 'Карл Ландштейнер',
+      year: '1900',
+      category: 'biology',
+      description: 'Открытие системы групп крови АВ0, сделавшее возможным безопасное переливание крови.',
+      impact: 'Спасение миллионов жизней'
     }
+  ];
+
+  const inventions = [
+    {
+      id: 1,
+      title: 'Паровой двигатель (усовершенствование)',
+      inventor: 'Джеймс Уатт',
+      year: '1769',
+      category: 'industry',
+      description: 'Усовершенствованный паровой двигатель стал основой промышленной революции.',
+      impact: 'Индустриальная революция'
+    },
+    {
+      id: 2,
+      title: 'Электрическая лампочка',
+      inventor: 'Томас Эдисон',
+      year: '1879',
+      category: 'energy',
+      description: 'Практичная лампа накаливания с долгим сроком службы, изменившая жизнь миллионов.',
+      impact: 'Освещение мира'
+    },
+    {
+      id: 3,
+      title: 'Телефон',
+      inventor: 'Александр Белл',
+      year: '1876',
+      category: 'communication',
+      description: 'Первое устройство для передачи человеческого голоса на расстояние.',
+      impact: 'Революция в коммуникации'
+    },
+    {
+      id: 4,
+      title: 'Радио',
+      inventor: 'Гульельмо Маркони',
+      year: '1895',
+      category: 'communication',
+      description: 'Беспроводная передача сигналов на расстояние, основа современных коммуникаций.',
+      impact: 'Беспроводная связь'
+    },
+    {
+      id: 5,
+      title: 'Автомобиль',
+      inventor: 'Карл Бенц',
+      year: '1885',
+      category: 'transport',
+      description: 'Первый практичный автомобиль с двигателем внутреннего сгорания.',
+      impact: 'Революция в транспорте'
+    },
+    {
+      id: 6,
+      title: 'Самолёт',
+      inventor: 'Братья Райт',
+      year: '1903',
+      category: 'transport',
+      description: 'Первый управляемый полёт на аппарате тяжелее воздуха с двигателем.',
+      impact: 'Начало авиации'
+    },
+    {
+      id: 7,
+      title: 'Кинематограф',
+      inventor: 'Братья Люмьер',
+      year: '1895',
+      category: 'entertainment',
+      description: 'Первый публичный показ кинофильмов, рождение киноискусства.',
+      impact: 'Новая форма искусства'
+    },
+    {
+      id: 8,
+      title: 'Фонограф',
+      inventor: 'Томас Эдисон',
+      year: '1877',
+      category: 'entertainment',
+      description: 'Первое устройство для записи и воспроизведения звука.',
+      impact: 'Запись звука'
+    },
+    {
+      id: 9,
+      title: 'Динамит',
+      inventor: 'Альфред Нобель',
+      year: '1867',
+      category: 'industry',
+      description: 'Мощное взрывчатое вещество, упростившее строительство и горное дело.',
+      impact: 'Строительство и промышленность'
+    },
+    {
+      id: 10,
+      title: 'Пастеризация',
+      inventor: 'Луи Пастер',
+      year: '1864',
+      category: 'food',
+      description: 'Метод обработки продуктов для уничтожения вредных микроорганизмов.',
+      impact: 'Безопасность пищи'
+    }
+  ];
+
+  const categoryIcons: { [key: string]: string } = {
+    physics: 'Atom',
+    chemistry: 'FlaskConical',
+    biology: 'Dna',
+    industry: 'Factory',
+    energy: 'Lightbulb',
+    communication: 'Radio',
+    transport: 'Car',
+    entertainment: 'Film',
+    food: 'Apple'
   };
 
-  const progress = (visitedSections.size / sections.length) * 100;
+  const filteredDiscoveries = selectedCategory === 'all' 
+    ? discoveries 
+    : discoveries.filter(d => d.category === selectedCategory);
+
+  const filteredInventions = selectedCategory === 'all' 
+    ? inventions 
+    : inventions.filter(i => i.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <header className="text-center mb-12 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold text-accent mb-4 tracking-tight">
-            Культура XIX века
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
+      <div 
+        className="relative bg-cover bg-center py-24"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://cdn.poehali.dev/projects/f4e66f76-ba25-4990-91bf-1b037f53ccfc/files/51140fb8-b449-4a4e-99b5-71f071747ea7.jpg')`
+        }}
+      >
+        <div className="container mx-auto px-4 text-center text-white">
+          <div className="flex justify-center mb-6">
+            <Icon name="Microscope" size={64} className="text-amber-300" />
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+            Великие открытия XIX-XX веков
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-6 font-light">
-            Игровое путешествие в историю Западной Европы и США
+          <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8">
+            Эпоха научных революций и технических прорывов, изменившая мир навсегда
           </p>
-          
-          <div className="max-w-md mx-auto space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">Прогресс исследования</span>
-              <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                <Icon name="Trophy" className="w-3 h-3 mr-1" />
-                {score} баллов
-              </Badge>
-            </div>
-            <Progress value={progress} className="h-3" />
-            <p className="text-xs text-muted-foreground">
-              Изучено разделов: {visitedSections.size} из {sections.length}
-            </p>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {sections.map((section, index) => (
-            <Card
-              key={section.id}
-              className={`cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-2 ${
-                selectedSection === section.id ? 'ring-4 ring-primary scale-105' : ''
-              } ${visitedSections.has(section.id) ? 'border-primary' : 'border-border'}`}
-              onClick={() => handleSectionClick(section.id)}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardHeader className={`${section.color} text-white rounded-t-lg relative overflow-hidden`}>
-                <div className="absolute top-0 right-0 opacity-10">
-                  <Icon name={section.icon as any} className="w-32 h-32" />
-                </div>
-                <div className="flex items-center justify-between relative z-10">
-                  <Icon name={section.icon as any} className="w-12 h-12" />
-                  {visitedSections.has(section.id) && (
-                    <Badge className="bg-white/20 backdrop-blur-sm">
-                      <Icon name="Check" className="w-4 h-4" />
-                    </Badge>
-                  )}
-                </div>
-                <CardTitle className="text-2xl mt-4">{section.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-2">
-                  {section.items.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center space-x-2 text-sm p-2 rounded-md hover:bg-muted/50 transition-colors"
-                    >
-                      <Icon name="BookOpen" className="w-4 h-4 text-primary" />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-                <Button
-                  className="w-full mt-4"
-                  variant={selectedSection === section.id ? "default" : "outline"}
-                >
-                  {selectedSection === section.id ? 'Свернуть' : 'Узнать больше'}
-                  <Icon
-                    name={selectedSection === section.id ? "ChevronUp" : "ChevronDown"}
-                    className="w-4 h-4 ml-2"
-                  />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
         </div>
-
-        {selectedSection && (
-          <div className="animate-scale-in">
-            <Card className="border-primary border-2 shadow-2xl">
-              <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
-                <div className="flex items-center space-x-3">
-                  <Icon
-                    name={sections.find(s => s.id === selectedSection)?.icon as any}
-                    className="w-8 h-8 text-primary"
-                  />
-                  <CardTitle className="text-3xl">
-                    {sections.find(s => s.id === selectedSection)?.title}
-                  </CardTitle>
-                </div>
-                <CardDescription className="text-base mt-2">
-                  Интересные факты и важные детали
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <Accordion type="single" collapsible className="w-full">
-                  {sections
-                    .find(s => s.id === selectedSection)
-                    ?.facts.map((fact, index) => (
-                      <AccordionItem key={index} value={`item-${index}`}>
-                        <AccordionTrigger className="text-lg font-semibold hover:text-primary">
-                          <div className="flex items-center space-x-3">
-                            <Badge variant="outline" className="font-mono">
-                              {index + 1}
-                            </Badge>
-                            <span>{fact.title}</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="text-base leading-relaxed text-muted-foreground pl-12">
-                          {fact.description}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {visitedSections.size === sections.length && (
-          <div className="mt-12 text-center animate-scale-in">
-            <Card className="border-primary border-2 bg-gradient-to-br from-primary/5 to-secondary/5">
-              <CardContent className="pt-6 pb-6">
-                <div className="flex flex-col items-center space-y-4">
-                  <Icon name="Trophy" className="w-20 h-20 text-primary animate-pulse" />
-                  <h3 className="text-3xl font-bold">Поздравляем!</h3>
-                  <p className="text-lg text-muted-foreground max-w-md">
-                    Вы изучили все разделы о культуре XIX века! Вы заработали {score} баллов и стали настоящим знатоком истории.
-                  </p>
-                  <Button size="lg" className="text-lg px-8">
-                    <Icon name="RotateCcw" className="w-5 h-5 mr-2" />
-                    Начать заново
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
+
+      <div className="container mx-auto px-4 py-16">
+        <Tabs defaultValue="discoveries" className="mb-12">
+          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-2 mb-12">
+            <TabsTrigger value="discoveries" className="text-lg">
+              <Icon name="Microscope" size={20} className="mr-2" />
+              Научные открытия
+            </TabsTrigger>
+            <TabsTrigger value="inventions" className="text-lg">
+              <Icon name="Lightbulb" size={20} className="mr-2" />
+              Технические изобретения
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="discoveries">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold mb-4">Научные открытия</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+                Фундаментальные открытия, раскрывшие тайны природы и заложившие основу современной науки
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                <Badge 
+                  variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('all')}
+                >
+                  Все
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'physics' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('physics')}
+                >
+                  <Icon name="Atom" size={16} className="mr-1" />
+                  Физика
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'chemistry' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('chemistry')}
+                >
+                  <Icon name="FlaskConical" size={16} className="mr-1" />
+                  Химия
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'biology' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('biology')}
+                >
+                  <Icon name="Dna" size={16} className="mr-1" />
+                  Биология
+                </Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDiscoveries.map((discovery) => (
+                <Card key={discovery.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white/90 backdrop-blur">
+                  <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                      <Icon name={categoryIcons[discovery.category]} size={32} className="text-primary" />
+                      <Badge variant="secondary">{discovery.year}</Badge>
+                    </div>
+                    <CardTitle className="text-xl mb-2">{discovery.title}</CardTitle>
+                    <CardDescription className="text-base font-semibold text-foreground">
+                      {discovery.scientist}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm mb-3 text-muted-foreground">{discovery.description}</p>
+                    <Badge variant="outline" className="bg-amber-50">
+                      <Icon name="Sparkles" size={14} className="mr-1" />
+                      {discovery.impact}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="inventions">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold mb-4">Технические изобретения</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+                Инновации, изменившие повседневную жизнь и создавшие основу современной цивилизации
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                <Badge 
+                  variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('all')}
+                >
+                  Все
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'industry' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('industry')}
+                >
+                  <Icon name="Factory" size={16} className="mr-1" />
+                  Промышленность
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'energy' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('energy')}
+                >
+                  <Icon name="Lightbulb" size={16} className="mr-1" />
+                  Энергетика
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'communication' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('communication')}
+                >
+                  <Icon name="Radio" size={16} className="mr-1" />
+                  Связь
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'transport' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('transport')}
+                >
+                  <Icon name="Car" size={16} className="mr-1" />
+                  Транспорт
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'entertainment' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('entertainment')}
+                >
+                  <Icon name="Film" size={16} className="mr-1" />
+                  Развлечения
+                </Badge>
+                <Badge 
+                  variant={selectedCategory === 'food' ? 'default' : 'outline'}
+                  className="cursor-pointer text-sm py-2 px-4"
+                  onClick={() => setSelectedCategory('food')}
+                >
+                  <Icon name="Apple" size={16} className="mr-1" />
+                  Пищевая отрасль
+                </Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredInventions.map((invention) => (
+                <Card key={invention.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white/90 backdrop-blur">
+                  <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                      <Icon name={categoryIcons[invention.category]} size={32} className="text-primary" />
+                      <Badge variant="secondary">{invention.year}</Badge>
+                    </div>
+                    <CardTitle className="text-xl mb-2">{invention.title}</CardTitle>
+                    <CardDescription className="text-base font-semibold text-foreground">
+                      {invention.inventor}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm mb-3 text-muted-foreground">{invention.description}</p>
+                    <Badge variant="outline" className="bg-amber-50">
+                      <Icon name="Zap" size={14} className="mr-1" />
+                      {invention.impact}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-16 bg-white/80 backdrop-blur rounded-lg p-8 shadow-lg">
+          <h2 className="text-3xl font-bold text-center mb-8">Эпоха перемен</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div>
+              <img 
+                src="https://cdn.poehali.dev/projects/f4e66f76-ba25-4990-91bf-1b037f53ccfc/files/3c8cf1d9-be1a-46bd-8dcd-b87397a5f628.jpg" 
+                alt="Учёный в лаборатории"
+                className="w-full h-64 object-cover rounded-lg shadow-md mb-4"
+              />
+              <h3 className="text-xl font-bold mb-3">Научная революция</h3>
+              <p className="text-muted-foreground">
+                XIX век стал золотым веком науки. Учёные раскрыли фундаментальные законы природы, 
+                создали периодическую систему элементов, объяснили эволюцию живых организмов и открыли 
+                микромир бактерий и атомов.
+              </p>
+            </div>
+            
+            <div>
+              <img 
+                src="https://cdn.poehali.dev/projects/f4e66f76-ba25-4990-91bf-1b037f53ccfc/files/de9f64a5-43fb-4b82-bb45-c12e7b35aaeb.jpg" 
+                alt="Технологии начала XX века"
+                className="w-full h-64 object-cover rounded-lg shadow-md mb-4"
+              />
+              <h3 className="text-xl font-bold mb-3">Промышленная революция</h3>
+              <p className="text-muted-foreground">
+                Технические изобретения преобразили мир. Паровые машины, электричество, телефоны, 
+                автомобили и самолёты изменили транспорт, коммуникации и быт людей. Наступила эра 
+                индустриализации и массового производства.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-amber-50 rounded-lg p-6 border-l-4 border-amber-500">
+            <div className="flex items-start gap-4">
+              <Icon name="Info" size={32} className="text-amber-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-xl font-bold mb-3">Наследие эпохи</h3>
+                <p className="text-muted-foreground mb-3">
+                  Открытия и изобретения XIX - начала XX века заложили фундамент современной цивилизации. 
+                  Научные теории того времени остаются актуальными, а технические решения эволюционировали 
+                  в сложные системы сегодняшнего дня.
+                </p>
+                <p className="text-muted-foreground">
+                  Этот период показал, как наука и технологии могут трансформировать общество, улучшить 
+                  качество жизни и открыть новые горизонты для человечества.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer className="bg-amber-900 text-white py-8 mt-16">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-lg">
+            Великие открытия изменяют мир. Наука и технологии - двигатели прогресса.
+          </p>
+          <p className="text-sm mt-4 text-amber-200">
+            XIX - начало XX века • Эпоха великих открытий
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
